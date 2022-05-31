@@ -27,9 +27,7 @@ impl StakingContract {
         }
     }
 
-    pub fn is_pause(&self) -> bool {
-        self.paused
-    }
+  
 
     pub fn internal_calculate_account_reward(&self, account: &Account) -> Balance {
         let lasted_block = if self.paused {

@@ -1,11 +1,11 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::LookupMap;
+use near_sdk::json_types::U128;
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
     env, near_bindgen, AccountId, Balance, BlockHeight, BorshStorageKey, EpochHeight,
     PanicOnDefault, Promise,
 };
-use near_sdk::json_types::U128;
 
 use crate::account::*;
 use crate::config::*;
@@ -25,6 +25,21 @@ pub enum StorageKey {
 }
 
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
+pub struct StakingContractV1 {
+    pub owner_id: AccountId,
+    pub ft_contract_id: AccountId,
+    pub config: Config,
+    pub total_stake_balance: Balance,
+    pub total_paid_reward_balance: Balance,
+    pub total_stakers: Balance,
+    pub pre_reward: Balance,
+    pub last_block_balance_change: BlockHeight,
+    pub accounts: LookupMap<AccountId, Account>,
+    pub paused: bool,
+    pub pause_at_block: BlockHeight,
+}
+
+#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 #[near_bindgen]
 pub struct StakingContract {
     pub owner_id: AccountId,
@@ -38,6 +53,7 @@ pub struct StakingContract {
     pub accounts: LookupMap<AccountId, Account>,
     pub paused: bool,
     pub pause_at_block: BlockHeight,
+    pub new_data: U128,
 }
 #[near_bindgen]
 impl StakingContract {
@@ -60,6 +76,7 @@ impl StakingContract {
             paused: false,
             accounts: LookupMap::new(StorageKey::AccountKey),
             pause_at_block: 0,
+            new_data: U128(0),
         }
     }
 
@@ -80,6 +97,35 @@ impl StakingContract {
 
             refund_deposit(after_storage_usage - before_storage_usage);
         }
+    }
+
+    pub fn get_new_data(&self) -> U128 {
+        self.new_data
+    }
+
+    #[private]
+    #[init(ignore_state)]
+    pub fn migrate() -> Self {
+        let contract_v1: StakingContractV1 = env::state_read().expect("Can not read state data");
+
+        StakingContract {
+            owner_id: contract_v1.owner_id,
+            ft_contract_id: contract_v1.ft_contract_id,
+            config: contract_v1.config,
+            total_stake_balance: contract_v1.total_stake_balance,
+            total_paid_reward_balance: contract_v1.total_paid_reward_balance,
+            total_stakers: contract_v1.total_paid_reward_balance,
+            pre_reward: contract_v1.pre_reward,
+            last_block_balance_change: contract_v1.last_block_balance_change,
+            paused: contract_v1.paused,
+            accounts: contract_v1.accounts,
+            pause_at_block: contract_v1.pause_at_block,
+            new_data: U128(10),
+        }
+    }
+
+    pub fn is_pause(&self) -> bool {
+        self.paused
     }
 }
 

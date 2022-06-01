@@ -7,8 +7,8 @@ use near_sdk::{
     PanicOnDefault, Promise,
 };
 
-use crate::account::*;
 use crate::config::*;
+use crate::account::*;
 use crate::enumeration::*;
 use crate::internal::*;
 use crate::utils::*;
@@ -34,7 +34,7 @@ pub struct StakingContractV1 {
     pub total_stakers: Balance,
     pub pre_reward: Balance,
     pub last_block_balance_change: BlockHeight,
-    pub accounts: LookupMap<AccountId, Account>,
+    pub accounts: LookupMap<AccountId, UpgradableAccount>,
     pub paused: bool,
     pub pause_at_block: BlockHeight,
 }
@@ -50,7 +50,7 @@ pub struct StakingContract {
     pub total_stakers: Balance,
     pub pre_reward: Balance,
     pub last_block_balance_change: BlockHeight,
-    pub accounts: LookupMap<AccountId, Account>,
+    pub accounts: LookupMap<AccountId, UpgradableAccount>,
     pub paused: bool,
     pub pause_at_block: BlockHeight,
     pub new_data: U128,
@@ -92,6 +92,7 @@ impl StakingContract {
         } else {
             // Tao Account Moi
             let before_storage_usage = env::storage_usage();
+            self.internal_register_account(account.clone());
 
             let after_storage_usage = env::storage_usage();
 

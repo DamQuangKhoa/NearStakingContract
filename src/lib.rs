@@ -5,6 +5,7 @@ use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
     env, near_bindgen, AccountId, Balance, BlockHeight, BorshStorageKey, EpochHeight,
     PanicOnDefault, Promise,
+    PromiseOrValue
 };
 
 use crate::config::*;
@@ -12,12 +13,14 @@ use crate::account::*;
 use crate::enumeration::*;
 use crate::internal::*;
 use crate::utils::*;
+use crate::core_impl::*;
 
 mod account;
 mod config;
 mod enumeration;
 mod internal;
 mod utils;
+mod core_impl;
 
 #[derive(BorshDeserialize, BorshSerialize, BorshStorageKey)]
 pub enum StorageKey {
@@ -127,6 +130,10 @@ impl StakingContract {
 
     pub fn is_pause(&self) -> bool {
         self.paused
+    }
+
+    pub fn get_ft_contract(&self) -> String {
+        self.ft_contract_id.to_string()
     }
 }
 

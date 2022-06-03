@@ -3,9 +3,11 @@ use near_sdk::collections::LookupMap;
 use near_sdk::json_types::U128;
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
+    ext_contract,
     env, near_bindgen, AccountId, Balance, BlockHeight, BorshStorageKey, EpochHeight,
     PanicOnDefault, Promise,
-    PromiseOrValue
+    PromiseOrValue,
+    Gas,
 };
 
 use crate::config::*;

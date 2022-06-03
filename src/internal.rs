@@ -59,10 +59,12 @@ impl StakingContract {
         reward
     }
 
-    pub fn internal_deposit_and_stake(&mut self, sender_id: AccountId, amount: u128) {
-        let upgradable_account = self.accounts.get(&sender_id);
+    pub fn internal_deposit_and_stake(&mut self, account_id: AccountId, amount: u128) {
+         // Validate data
+        env::log(format!("account_id: {}", account_id).as_bytes());
+        let upgradable_account = self.accounts.get(&account_id);
         assert!(upgradable_account.is_some(), "ERR_ACCOUNT_NOT_FOUND");
-        assert_eq!(self.paused, false, "ERR_CONTRACT_PAURSED");
+        assert_eq!(self.paused, false, "ERR_CONTRACT_PAUSED");
         assert_eq!(self.ft_contract_id, env::predecessor_account_id(), "ERR_INVALID_FT_CONTRACT_ID");
 
         let mut account = Account::from(upgradable_account.unwrap());
@@ -77,7 +79,7 @@ impl StakingContract {
         account.stake_balance += amount;
         account.last_block_balance_change = env::block_index();
 
-        self.accounts.insert(&sender_id, &UpgradableAccount::from(account));
+        self.accounts.insert(&account_id, &UpgradableAccount::from(account));
 
         // update pool data
 

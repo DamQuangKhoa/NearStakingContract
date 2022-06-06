@@ -66,8 +66,8 @@ impl StakingContract {
         ).then(ext_self::ft_withdraw_callback(
             account_id.clone(), 
             old_account, 
-            &self.ft_contract_id,
-            DEPOSITE_ONE_YOCTOR,
+            &env::current_account_id(),
+            NO_DEPOSITE,
             FT_HARVEST_CALLBACK_GAS))
     }
 
@@ -125,7 +125,7 @@ impl StakingContract {
         }
     }
 
-
+    #[private]
     pub fn ft_withdraw_callback(&mut self, account_id: AccountId, old_account: Account) -> U128 {
         assert_eq!(env::promise_results_count(), 1, "ERR_TOO_MANY_RESULT");
 

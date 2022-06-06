@@ -12,6 +12,7 @@ use near_sdk::{
 
 use crate::config::*;
 use crate::account::*;
+use crate::account::AccountJson;
 use crate::enumeration::*;
 use crate::internal::*;
 use crate::utils::*;

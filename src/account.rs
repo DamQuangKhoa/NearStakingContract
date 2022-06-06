@@ -55,7 +55,7 @@ impl From<Account> for UpgradableAccount {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct AccountJson {
     pub account_id: AccountId,

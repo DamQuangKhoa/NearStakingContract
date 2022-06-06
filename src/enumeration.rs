@@ -17,6 +17,7 @@ impl StakingContract {
         let account = Account::from(upgradable_account);
 
         let new_reward = self.internal_calculate_account_reward(&account);
+        
         AccountJson::from(account_id, new_reward, account)
     }
 
